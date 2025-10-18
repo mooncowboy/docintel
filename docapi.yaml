@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: Azure AI Document Intelligence (proxy)
+  version: 1.0.0
+servers:
+  - url: https://YOUR-APIM-HOST
+paths:
+  /documentintelligence/documentModels/{modelId}:analyze:
+    post:
+      summary: Analyze Document
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: _overload
+          in: query
+          required: false
+          schema: { type: string, enum: [analyzeDocument] }
+        - name: api-version
+          in: query
+          required: true
+          schema: { type: string, example: '2024-11-30' }
+        - name: pages
+          in: query
+          required: false
+          schema: { type: string }
+        - name: locale
+          in: query
+          required: false
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    urlSource: { type: string, format: uri }
+                  required: [urlSource]
+                - type: object
+                  properties:
+                    base64Source: { type: string }
+                  required: [base64Source]
+      responses:
+        '202':
+          description: Accepted
+          headers:
+            Operation-Location:
+              description: Polling URL for the analysis operation
+              schema: { type: string, format: uri }
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '429':
+          description: Too Many Requests
+  /documentintelligence/documentModels/operations/{operationId}:
+    get:
+      summary: Get operation status/result
+      parameters:
+        - name: operationId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: api-version
+          in: query
+          required: true
+          schema: { type: string, example: '2024-11-30' }
+      responses:
+        '200':
+          description: Operation status/result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [notStarted, running, succeeded, failed, canceled]
+                  createdDateTime: { type: string }
+                  lastUpdatedDateTime: { type: string }
+                  result: { type: object }
+        '404':
+          description: Not Found
