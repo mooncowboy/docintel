@@ -35,7 +35,7 @@ Once these API endpoints are created, apply the provided policies from `policy-a
 
 ## Why is this needed?
 
-Because AI Document Intelligence injects the Operation-Location header when calling the analyze_document endpoint, we need to ensure that this header:
+Because AI Document Intelligence injects Operation-Location in the response of the analyze_document endpoint and then the poller uses that value as the URL. Because this returns the URL of the Document Intelligence endpoint, not the API Management one, it makes the auth key invalid (as it's an Azure API Management key) and can result in a polling operation call a Document Intelligence resource that was not the one that analyze_document was called for. With that, we need to have an API Management outbound policy that:
 
 - Points to API Management instead of the direct AI Document Intelligence endpoint
 - Injects the backendId query parameter to route requests to the correct backend, or else the polling will fail.
