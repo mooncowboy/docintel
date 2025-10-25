@@ -6,6 +6,8 @@ Useful to add resiliency and failover between multiple Azure regions when using 
 
 In a **production scenario**, you would configure an alert on your primary region Document Intelligence resource to trigger a function, logic app or automation runbook that would update the APIM named value to switch to the secondary region in case of failures. 
 
+![alt text](media/doc-intel.png)
+
 ## Azure Setup
 
 Before running this project, ensure you have set up:
