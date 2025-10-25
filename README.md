@@ -8,6 +8,11 @@ In a **production scenario**, you would configure an alert on your primary regio
 
 ![alt text](media/doc-intel.png)
 
+## Improvements not considered in this demo
+
+- Private endpoints for Azure AI Document Intelligence resources
+- Managed identities for authentication instead of API keys
+
 ## Azure Setup
 
 Before running this project, ensure you have set up:
