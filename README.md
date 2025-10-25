@@ -16,6 +16,8 @@ Before running this project, ensure you have set up:
 - An Azure API Management backend pool with both Document Intelligence resources added as backends
 - An Azure API Management named value to store the active backend ID (eg: doc-north or doc-west)
 
+You can find the api definition in `doc-api.json` (replace YOUR-SERVICE-NAME with your actual service name).
+
 In Azure API Management, configure the following:
 
 - An API called Azure AI Document Intelligence
@@ -36,15 +38,12 @@ Because AI Document Intelligence injects the Operation-Location header when call
 
 This project provides tools to test Azure Document Intelligence's prebuilt invoice analysis model. It includes:
 
-- **REST API implementation** (`run.py`) - Direct REST API calls with manual polling
 - **SDK implementation** (`run-sdk.py`) - Azure Document Intelligence Python SDK with LRO poller
 - **Backend switching script** (`script-switch-backend.sh`) - Toggle between different Azure backends
 
 ## Prerequisites
 
 - Python 3.7+
-- Azure Document Intelligence resource
-- Azure API Management (APIM) service (for backend switching)
 - Azure CLI (for backend switching script)
 
 ## Setup
@@ -122,7 +121,6 @@ This script:
 ```
 docintel/
 ├── docs/                     # PDF files for analysis
-├── run.py                    # REST API implementation
 ├── run-sdk.py                # SDK implementation
 ├── script-switch-backend.sh  # Backend switching utility
 ├── requirements.txt          # Python dependencies
