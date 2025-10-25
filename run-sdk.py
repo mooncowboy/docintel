@@ -3,6 +3,7 @@ from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 from azure.core.credentials import AzureKeyCredential
 import base64, json, os, sys
 from dotenv import load_dotenv
+import time
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -29,6 +30,10 @@ for i in range(num_runs):
         model_id="prebuilt-invoice",
         body={"base64Source": b64},
     )
+    print(vars(poller))
+
+    print("delaying for 1 minute to switch active-backend. poller should still call the old one...")
+    time.sleep(60)
 
     result = poller.result()
     print(json.dumps(result.as_dict(), indent=2))

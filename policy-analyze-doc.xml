@@ -1,0 +1,50 @@
+<!--
+    - Policies are applied in the order they appear.
+    - Position <base/> inside a section to inherit policies from the outer scope.
+    - Comments within policies are not preserved.
+-->
+<!-- Add policies as children to the <inbound>, <outbound>, <backend>, and <on-error> elements -->
+<policies>
+    <!-- Throttle, authorize, validate, cache, or transform the requests -->
+    <inbound>
+        <base />
+    </inbound>
+    <!-- Control if and how the requests are forwarded to services  -->
+    <backend>
+        <base />
+    </backend>
+    <!-- Customize the responses -->
+    <outbound>
+        <base />
+        <!-- Because analyze_document returns an Operation-Location header, we need to modify it to point to APIm with the correct backendId -->
+        <choose>
+            <when condition="@(context.Response.Headers.ContainsKey("Operation-Location") && context.Response.Headers["Operation-Location"] != null && context.Response.Headers["Operation-Location"].Length > 0)">
+                <set-header name="Operation-Location" exists-action="override">
+                    <value>@{
+            // Get original Operation-Location from backend
+            var op = context.Response.Headers["Operation-Location"][0];
+
+            var original = new System.Uri(op);
+            var scheme   = context.Request.OriginalUrl.Scheme;
+            var host     = context.Request.OriginalUrl.Host;
+
+            // Build new query with backendId=doc-west
+            var query    = original.Query; // includes leading "?" or empty string
+            var newQuery = string.IsNullOrEmpty(query)
+                ? "?backendId=doc-west"
+                : query + "&backendId=doc-west";
+
+            // Compose the APIM URL (prefix /doc, keep original path)
+            var newUrl = scheme + "://" + host + "/doc" + original.AbsolutePath + newQuery;
+
+            return newUrl;
+        }</value>
+                </set-header>
+            </when>
+        </choose>
+    </outbound>
+    <!-- Handle exceptions and customize error responses  -->
+    <on-error>
+        <base />
+    </on-error>
+</policies>
